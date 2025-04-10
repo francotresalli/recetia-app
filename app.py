@@ -13,8 +13,9 @@ import os
 # Configurá tu clave de API de OpenAI (usá secrets en producción)
 api_key = st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else os.getenv("OPENAI_API_KEY")
 
-# Asignar API key directamente al cliente de OpenAI (v1.0.0+)
-openai.api_key = api_key
+# Crear cliente moderno de OpenAI
+from openai import OpenAI
+client = OpenAI(api_key=api_key)
 
 st.set_page_config(page_title="RecetIA - Cociná con lo que tenés", page_icon="🥘")
 
@@ -32,7 +33,7 @@ if st.button("¡Generar receta!"):
             prompt = f"Tengo los siguientes ingredientes: {ingredientes}. Sugerime una receta fácil, rápida y sabrosa que pueda hacer solo con eso. Indicá los pasos y la cantidad aproximada de ingredientes."
 
             try:
-                respuesta = openai.ChatCompletion.create(
+                respuesta = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "user", "content": prompt}
