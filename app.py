@@ -1,21 +1,14 @@
-# Este archivo requiere el paquete streamlit y openai >= 1.0.0
-# Asegurate de tenerlos instalados con:
+# Este archivo requiere los paquetes streamlit y openai >= 1.0.0
+# Instalación recomendada:
 # pip install streamlit openai
 
-try:
-    import streamlit as st
-except ModuleNotFoundError:
-    raise ModuleNotFoundError("Streamlit no está instalado. Ejecutá 'pip install streamlit' en tu entorno para poder usar esta app.")
-
+import streamlit as st
 import openai
 import os
 
-# Configurá tu clave de API de OpenAI (usá secrets en producción)
+# Configurar la API key desde secrets o variable de entorno
 api_key = st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else os.getenv("OPENAI_API_KEY")
-
-# Crear cliente moderno de OpenAI
-from openai import OpenAI
-client = OpenAI(api_key=api_key)
+openai.api_key = api_key  # Método compatible con openai>=1.0.0 si no usás el cliente nuevo
 
 st.set_page_config(page_title="RecetIA - Cociná con lo que tenés", page_icon="🥘")
 
@@ -33,7 +26,7 @@ if st.button("¡Generar receta!"):
             prompt = f"Tengo los siguientes ingredientes: {ingredientes}. Sugerime una receta fácil, rápida y sabrosa que pueda hacer solo con eso. Indicá los pasos y la cantidad aproximada de ingredientes."
 
             try:
-                respuesta = client.chat.completions.create(
+                respuesta = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "user", "content": prompt}
