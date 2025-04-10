@@ -26,7 +26,7 @@ if st.button("¡Generar receta!"):
             prompt = f"Tengo los siguientes ingredientes: {ingredientes}. Sugerime una receta fácil, rápida y sabrosa que pueda hacer solo con eso. Indicá los pasos y la cantidad aproximada de ingredientes."
 
             try:
-                model = genai.GenerativeModel("gemini-pro")
+                model = genai.GenerativeModel(model_name="models/chat-bison-001")
                 response = model.generate_content(prompt)
                 receta = response.text
                 st.success("¡Receta generada!")
