@@ -1,14 +1,14 @@
-# Este archivo requiere los paquetes streamlit y openai >= 1.0.0
+# Este archivo requiere los paquetes streamlit y google-generativeai
 # Instalación recomendada:
-# pip install streamlit openai
+# pip install streamlit google-generativeai
 
 import streamlit as st
-import openai
+import google.generativeai as genai
 import os
 
 # Configurar la API key desde secrets o variable de entorno
-api_key = st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else os.getenv("OPENAI_API_KEY")
-openai.api_key = api_key  # Método compatible con openai>=1.0.0 si no usás el cliente nuevo
+gemini_api_key = st.secrets["gemini_api_key"] if "gemini_api_key" in st.secrets else os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=gemini_api_key)
 
 st.set_page_config(page_title="RecetIA - Cociná con lo que tenés", page_icon="🥘")
 
@@ -26,17 +26,13 @@ if st.button("¡Generar receta!"):
             prompt = f"Tengo los siguientes ingredientes: {ingredientes}. Sugerime una receta fácil, rápida y sabrosa que pueda hacer solo con eso. Indicá los pasos y la cantidad aproximada de ingredientes."
 
             try:
-                respuesta = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "user", "content": prompt}
-                    ]
-                )
-                receta = respuesta.choices[0].message.content
+                model = genai.GenerativeModel("gemini-pro")
+                response = model.generate_content(prompt)
+                receta = response.text
                 st.success("¡Receta generada!")
                 st.markdown(receta)
             except Exception as e:
-                st.error("Ocurrió un error generando la receta. Verificá tu conexión o clave de API.")
+                st.error("Ocurrió un error generando la receta. Verificá tu conexión o clave de API de Gemini.")
                 st.exception(e)
     else:
         st.warning("Por favor ingresá al menos un ingrediente.")
