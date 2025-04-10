@@ -1,4 +1,5 @@
-# Este archivo requiere el paquete streamlit. Asegurate de tenerlo instalado con:
+# Este archivo requiere el paquete streamlit y openai >= 1.0.0
+# Asegurate de tenerlos instalados con:
 # pip install streamlit openai
 
 try:
@@ -28,7 +29,8 @@ if st.button("¡Generar receta!"):
             prompt = f"Tengo los siguientes ingredientes: {ingredientes}. Sugerime una receta fácil, rápida y sabrosa que pueda hacer solo con eso. Indicá los pasos y la cantidad aproximada de ingredientes."
 
             try:
-                respuesta = openai.ChatCompletion.create(
+                client = openai.OpenAI()
+                respuesta = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "user", "content": prompt}
